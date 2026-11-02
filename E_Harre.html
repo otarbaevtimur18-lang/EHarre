@@ -1,0 +1,1262 @@
+<!DOCTYPE html>
+<html lang="uz" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E Harre - Rus Tili Olimpiada Tayyorlov Platformasi</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Tone.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            400: '#818cf8',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            900: '#1e1b4b',
+                            950: '#0f0e26'
+                        },
+                        cyber: {
+                            cyan: '#06b6d4',
+                            emerald: '#10b981',
+                            rose: '#f43f5e',
+                            amber: '#f59e0b',
+                            purple: '#a855f7'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.6); }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(99, 102, 241, 0.4); border-radius: 8px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(99, 102, 241, 0.8); }
+        
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.5);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .glow-brand { box-shadow: 0 0 25px -5px rgba(99, 102, 241, 0.4); }
+        .glow-emerald { box-shadow: 0 0 25px -5px rgba(16, 185, 129, 0.4); }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col antialiased selection:bg-brand-500 selection:text-white relative overflow-x-hidden">
+
+    <!-- Ambient Grid Background -->
+    <div class="fixed inset-0 bg-[linear-gradient(to_right,#1e1b4b15_1px,transparent_1px),linear-gradient(to_bottom,#1e1b4b15_1px,transparent_1px)] bg-[size:4rem_4rem] pointer-events-none z-0"></div>
+    <div class="fixed top-0 left-1/2 -translate-x-1/2 w-[800px] h-[350px] bg-brand-600/10 rounded-full blur-[120px] pointer-events-none z-0"></div>
+
+    <!-- Header -->
+    <header class="sticky top-0 z-40 backdrop-blur-xl bg-slate-950/80 border-b border-slate-800/80">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <!-- Logo -->
+            <div class="flex items-center gap-3 cursor-pointer" onclick="goHome()">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 via-cyber-purple to-cyber-cyan p-0.5 shadow-lg glow-brand">
+                    <div class="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center text-white font-black text-xl">
+                        E
+                    </div>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-xl font-black tracking-wider bg-gradient-to-r from-white via-slate-200 to-brand-400 bg-clip-text text-transparent">E HARRE</span>
+                        <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-brand-500/20 text-brand-400 border border-brand-500/30 uppercase tracking-widest">Olimpiada Pro</span>
+                    </div>
+                    <span class="text-[11px] block text-slate-400 font-medium -mt-1">Rus tili filologiya va olimpiada markazi</span>
+                </div>
+            </div>
+
+            <!-- Header Controls -->
+            <div class="flex items-center gap-2 sm:gap-3">
+                <!-- Ambient Audio Generator -->
+                <button id="bgAudioBtn" onclick="toggleBgAudio()" title="Focus Lo-Fi Sound" class="p-2.5 rounded-xl bg-slate-900 border border-slate-800 hover:border-slate-700 text-slate-400 hover:text-cyber-cyan transition-all flex items-center gap-2 text-xs font-semibold">
+                    <i class="fa-solid fa-headphones text-sm" id="bgAudioIcon"></i>
+                    <span class="hidden md:inline">Focus Audio</span>
+                </button>
+
+                <!-- Saved Questions Button -->
+                <button onclick="openSavedModal()" title="Saqlangan savollar" class="p-2.5 rounded-xl bg-slate-900 border border-slate-800 hover:border-slate-700 text-slate-300 hover:text-white transition-all relative">
+                    <i class="fa-solid fa-bookmark text-sm"></i>
+                    <span id="savedCount" class="absolute -top-1 -right-1 bg-cyber-amber text-slate-950 text-[10px] font-black w-4 h-4 rounded-full flex items-center justify-center hidden">0</span>
+                </button>
+
+                <!-- Misconceptions / Incorrects Button -->
+                <button onclick="openIncorrectsModal()" title="Xatolar ustida ishlash" class="p-2.5 rounded-xl bg-slate-900 border border-slate-800 hover:border-slate-700 text-slate-300 hover:text-white transition-all relative">
+                    <i class="fa-solid fa-triangle-exclamation text-sm text-cyber-rose"></i>
+                    <span id="incorrectCount" class="absolute -top-1 -right-1 bg-cyber-rose text-white text-[10px] font-black w-4 h-4 rounded-full flex items-center justify-center hidden">0</span>
+                </button>
+
+                <!-- Add Custom Question -->
+                <button onclick="openImportModal()" title="Savol Qo'shish" class="p-2.5 rounded-xl bg-brand-600/20 border border-brand-500/30 hover:bg-brand-600/30 text-brand-300 transition-all flex items-center gap-1.5 text-xs font-bold">
+                    <i class="fa-solid fa-plus text-xs"></i>
+                    <span class="hidden sm:inline">Import</span>
+                </button>
+
+                <!-- Sound FX Toggle -->
+                <button id="soundBtn" onclick="toggleSound()" title="Ovoz effektlari" class="p-2.5 rounded-xl bg-slate-900 border border-slate-800 hover:border-slate-700 text-slate-300 transition-all">
+                    <i class="fa-solid fa-volume-high text-sm" id="soundIcon"></i>
+                </button>
+
+                <!-- Reset Memory -->
+                <button onclick="resetQuestionHistory()" title="Barcha ko'rilgan testlarni qayta tiklash" class="p-2.5 rounded-xl bg-slate-900 border border-slate-800 hover:border-slate-700 text-slate-400 hover:text-slate-200 transition-all">
+                    <i class="fa-solid fa-rotate-left text-sm"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 flex flex-col justify-center relative z-10">
+
+        <!-- DASHBOARD VIEW -->
+        <section id="dashboardView" class="space-y-8 animate-fade-in">
+            
+            <!-- Hero Banner -->
+            <div class="relative overflow-hidden rounded-3xl glass-panel p-6 sm:p-10 border border-slate-800 shadow-2xl">
+                <div class="absolute -right-10 -bottom-10 w-96 h-96 bg-brand-600/10 rounded-full blur-3xl pointer-events-none"></div>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                    <div class="lg:col-span-7 space-y-4">
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-500/10 border border-brand-500/30 text-brand-400 text-xs font-bold">
+                            <i class="fa-solid fa-shield-halved text-cyber-cyan"></i> 100% Takrorlanmas Olimpiada Algoritmi
+                        </div>
+                        <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight leading-tight">
+                            Rus tili bo'yicha <span class="bg-gradient-to-r from-brand-400 via-cyber-cyan to-cyber-purple bg-clip-text text-transparent">Olimpiada Chempioni</span> bo'ling!
+                        </h1>
+                        <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
+                            Respublika va tuman bosqichi standartlaridagi murakkab grammatika, orfoepiya (urg'ular), frazeologiya va sintaksis testlari. Har bir savolga filologik chuqur o'zbekcha izoh berilgan.
+                        </p>
+
+                        <!-- Stats Quick Bar -->
+                        <div class="grid grid-cols-3 gap-3 pt-2 max-w-lg">
+                            <div class="bg-slate-900/80 border border-slate-800 p-3 rounded-2xl">
+                                <span class="text-[11px] text-slate-400 font-semibold uppercase block mb-0.5">Jami Savollar</span>
+                                <span id="dashTotalQuestions" class="text-lg font-black text-white">0</span>
+                            </div>
+                            <div class="bg-slate-900/80 border border-slate-800 p-3 rounded-2xl">
+                                <span class="text-[11px] text-slate-400 font-semibold uppercase block mb-0.5">Yechilgan</span>
+                                <span id="dashSolvedQuestions" class="text-lg font-black text-cyber-emerald">0</span>
+                            </div>
+                            <div class="bg-slate-900/80 border border-slate-800 p-3 rounded-2xl">
+                                <span class="text-[11px] text-slate-400 font-semibold uppercase block mb-0.5">Olimpiada Indeksi</span>
+                                <span id="dashReadinessScore" class="text-lg font-black text-cyber-amber">0%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- User Badges Card -->
+                    <div class="lg:col-span-5 bg-slate-900/90 border border-slate-800 rounded-2xl p-5 space-y-4">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                                <i class="fa-solid fa-award text-cyber-amber"></i> Erishilgan Unvonlar
+                            </h3>
+                            <span id="userBadgeTitle" class="text-xs font-extrabold text-brand-400">Boshlang'ich Izlanuvchi</span>
+                        </div>
+                        <div class="grid grid-cols-3 gap-2 text-center">
+                            <div id="badge-filolog" class="opacity-30 p-2 rounded-xl bg-slate-800 border border-slate-700 transition-all">
+                                <i class="fa-solid fa-book-bookmark text-2xl text-cyber-cyan mb-1 block"></i>
+                                <span class="text-[10px] font-bold block text-slate-300">Filolog</span>
+                            </div>
+                            <div id="badge-urgu" class="opacity-30 p-2 rounded-xl bg-slate-800 border border-slate-700 transition-all">
+                                <i class="fa-solid fa-bolt text-2xl text-cyber-amber mb-1 block"></i>
+                                <span class="text-[10px] font-bold block text-slate-300">Urg'u Ustasi</span>
+                            </div>
+                            <div id="badge-chempion" class="opacity-30 p-2 rounded-xl bg-slate-800 border border-slate-700 transition-all">
+                                <i class="fa-solid fa-trophy text-2xl text-cyber-rose mb-1 block"></i>
+                                <span class="text-[10px] font-bold block text-slate-300">Olimpiada G'olibi</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Olympiad Category Grid -->
+            <div>
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-xl font-extrabold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-cubes text-brand-500"></i> Olimpiada Yo'nalishlari
+                    </h2>
+                    <span class="text-xs text-slate-400">Kerakli rejim ustiga bosing</span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                    
+                    <!-- Respublika Olimpiadasi -->
+                    <div onclick="startQuiz('Respublika')" class="group glass-card hover:bg-slate-900 border border-slate-800 hover:border-cyber-purple/50 rounded-2xl p-6 cursor-pointer transition-all duration-300 hover:-translate-y-1.5 hover:shadow-2xl hover:shadow-cyber-purple/10 flex flex-col justify-between">
+                        <div>
+                            <div class="flex justify-between items-start mb-4">
+                                <div class="w-12 h-12 rounded-2xl bg-cyber-purple/10 text-cyber-purple border border-cyber-purple/30 flex items-center justify-center text-xl font-black group-hover:scale-110 transition-transform">
+                                    C1+
+                                </div>
+                                <span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold bg-cyber-purple/20 text-cyber-purple uppercase">Yuqori Murakkab</span>
+                            </div>
+                            <h3 class="text-lg font-black text-white mb-1 group-hover:text-cyber-purple transition-colors">Respublika Olimpiadasi</h3>
+                            <p class="text-slate-400 text-xs leading-relaxed mb-4">
+                                Sintaksis, paronimlar, fe'l boshqaruvi va adabiy norma doirasidagi oliy darajali testlar.
+                            </p>
+                        </div>
+                        <div class="flex items-center justify-between text-xs font-bold text-cyber-purple pt-3 border-t border-slate-800/80">
+                            <span id="stat-Respublika">-- savol qoldi</span>
+                            <i class="fa-solid fa-arrow-right group-hover:translate-x-1.5 transition-transform"></i>
+                        </div>
+                    </div>
+
+                    <!-- Tuman / Maktab Olimpiadasi -->
+                    <div onclick="startQuiz('Tuman')" class="group glass-card hover:bg-slate-900 border border-slate-800 hover:border-cyber-cyan/50 rounded-2xl p-6 cursor-pointer transition-all duration-300 hover:-translate-y-1.5 hover:shadow-2xl hover:shadow-cyber-cyan/10 flex flex-col justify-between">
+                        <div>
+                            <div class="flex justify-between items-start mb-4">
+                                <div class="w-12 h-12 rounded-2xl bg-cyber-cyan/10 text-cyber-cyan border border-cyber-cyan/30 flex items-center justify-center text-xl font-black group-hover:scale-110 transition-transform">
+                                    B2
+                                </div>
+                                <span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold bg-cyber-cyan/20 text-cyber-cyan uppercase">Standart Baza</span>
+                            </div>
+                            <h3 class="text-lg font-black text-white mb-1 group-hover:text-cyber-cyan transition-colors">Tuman & Maktab Bosqichi</h3>
+                            <p class="text-slate-400 text-xs leading-relaxed mb-4">
+                                Padejlar, fe'l ko'rinishlari, sifatdosh/ravishdosh iboralari va standart grammatika.
+                            </p>
+                        </div>
+                        <div class="flex items-center justify-between text-xs font-bold text-cyber-cyan pt-3 border-t border-slate-800/80">
+                            <span id="stat-Tuman">-- savol qoldi</span>
+                            <i class="fa-solid fa-arrow-right group-hover:translate-x-1.5 transition-transform"></i>
+                        </div>
+                    </div>
+
+                    <!-- Urg'u & Frazeologiya Sprint -->
+                    <div onclick="startQuiz('Sprint')" class="group glass-card hover:bg-slate-900 border border-slate-800 hover:border-cyber-amber/50 rounded-2xl p-6 cursor-pointer transition-all duration-300 hover:-translate-y-1.5 hover:shadow-2xl hover:shadow-cyber-amber/10 flex flex-col justify-between">
+                        <div>
+                            <div class="flex justify-between items-start mb-4">
+                                <div class="w-12 h-12 rounded-2xl bg-cyber-amber/10 text-cyber-amber border border-cyber-amber/30 flex items-center justify-center text-xl font-black group-hover:scale-110 transition-transform">
+                                    <i class="fa-solid fa-bolt"></i>
+                                </div>
+                                <span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold bg-cyber-amber/20 text-cyber-amber uppercase">Tezkor Sprint</span>
+                            </div>
+                            <h3 class="text-lg font-black text-white mb-1 group-hover:text-cyber-amber transition-colors">Frazeologiya & Orfoepiya</h3>
+                            <p class="text-slate-400 text-xs leading-relaxed mb-4">
+                                Urg'ular (ударения), frazeologizmlar va qanotli iboralar bo'yicha maxsus testlar.
+                            </p>
+                        </div>
+                        <div class="flex items-center justify-between text-xs font-bold text-cyber-amber pt-3 border-t border-slate-800/80">
+                            <span id="stat-Sprint">-- savol qoldi</span>
+                            <i class="fa-solid fa-arrow-right group-hover:translate-x-1.5 transition-transform"></i>
+                        </div>
+                    </div>
+
+                    <!-- Grammatika Ekspert -->
+                    <div onclick="startQuiz('Grammatika')" class="group glass-card hover:bg-slate-900 border border-slate-800 hover:border-cyber-emerald/50 rounded-2xl p-6 cursor-pointer transition-all duration-300 hover:-translate-y-1.5 hover:shadow-2xl hover:shadow-cyber-emerald/10 flex flex-col justify-between">
+                        <div>
+                            <div class="flex justify-between items-start mb-4">
+                                <div class="w-12 h-12 rounded-2xl bg-cyber-emerald/10 text-cyber-emerald border border-cyber-emerald/30 flex items-center justify-center text-xl font-black group-hover:scale-110 transition-transform">
+                                    <i class="fa-solid fa-spell-check"></i>
+                                </div>
+                                <span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold bg-cyber-emerald/20 text-cyber-emerald uppercase">Chuqur Sintaksis</span>
+                            </div>
+                            <h3 class="text-lg font-black text-white mb-1 group-hover:text-cyber-emerald transition-colors">Grammatika Ekspert</h3>
+                            <p class="text-slate-400 text-xs leading-relaxed mb-4">
+                                Murakkab predloglar, kelishik boshqaruvi va vergul qoidalari.
+                            </p>
+                        </div>
+                        <div class="flex items-center justify-between text-xs font-bold text-cyber-emerald pt-3 border-t border-slate-800/80">
+                            <span id="stat-Grammatika">-- savol qoldi</span>
+                            <i class="fa-solid fa-arrow-right group-hover:translate-x-1.5 transition-transform"></i>
+                        </div>
+                    </div>
+
+                    <!-- Aralash Generator Marafon -->
+                    <div onclick="startQuiz('Aralash')" class="group lg:col-span-2 glass-card bg-gradient-to-r from-brand-950/80 via-slate-900 to-slate-900 border border-brand-500/40 hover:border-brand-500 rounded-2xl p-6 cursor-pointer transition-all duration-300 hover:-translate-y-1.5 hover:shadow-2xl hover:shadow-brand-500/20 flex flex-col sm:flex-row items-center justify-between gap-6">
+                        <div class="space-y-2">
+                            <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-brand-500/20 text-brand-300 border border-brand-500/30">
+                                <i class="fa-solid fa-fire text-cyber-rose"></i> Olimpiada Marafon Tizimi
+                            </div>
+                            <h3 class="text-xl font-black text-white">Aralash Generator Marafon</h3>
+                            <p class="text-slate-400 text-xs leading-relaxed max-w-lg">
+                                Barcha daraja va yo'nalishlardan eng sara takrorlanmaydigan savollar to'plami. Olimpiada simulyatsiyasi uchun ideal.
+                            </p>
+                        </div>
+                        <div class="flex items-center gap-3 shrink-0">
+                            <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-brand-600 to-cyber-purple text-white flex items-center justify-center text-2xl font-black shadow-lg shadow-brand-500/30 group-hover:scale-110 transition-transform">
+                                <i class="fa-solid fa-shuffle"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Quiz Settings Bar -->
+            <div class="glass-panel rounded-2xl p-5 border border-slate-800 flex flex-wrap items-center justify-between gap-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-brand-500/20 text-brand-400 flex items-center justify-center font-bold">
+                        <i class="fa-solid fa-sliders"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-xs font-bold text-white uppercase tracking-wider">Test Sozlamalari</h4>
+                        <p class="text-[11px] text-slate-400">Olimpiada simulyatsiyasini o'zingizga moslang</p>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap items-center gap-6 text-xs">
+                    <!-- Question Count Limit -->
+                    <div class="flex items-center gap-2">
+                        <label for="questionLimit" class="text-slate-400 font-medium">Savollar soni:</label>
+                        <select id="questionLimit" class="bg-slate-900 border border-slate-700 text-slate-200 rounded-xl px-3 py-1.5 focus:outline-none focus:border-brand-500 font-bold">
+                            <option value="5">5 ta (Tezkor)</option>
+                            <option value="10" selected>10 ta (Standart)</option>
+                            <option value="20">20 ta (Olimpiada)</option>
+                            <option value="50">50 ta (Marafon)</option>
+                        </select>
+                    </div>
+
+                    <!-- Timer Check -->
+                    <div class="flex items-center gap-2">
+                        <input type="checkbox" id="timerToggle" checked class="w-4 h-4 rounded text-brand-500 focus:ring-brand-500 bg-slate-900 border-slate-700 cursor-pointer">
+                        <label for="timerToggle" class="text-slate-300 font-medium cursor-pointer">Vaqt chegarasi (45 soniya)</label>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- QUIZ VIEW -->
+        <section id="quizView" class="hidden space-y-6">
+            
+            <!-- Quiz Bar Header -->
+            <div class="flex flex-wrap items-center justify-between gap-4 glass-panel rounded-2xl p-4 border border-slate-800">
+                <div class="flex items-center gap-3">
+                    <span id="currentLevelBadge" class="px-3 py-1 rounded-xl text-xs font-black bg-brand-500/20 text-brand-300 border border-brand-500/30 uppercase tracking-wider">
+                        Respublika
+                    </span>
+                    <span id="questionCounter" class="text-xs font-semibold text-slate-400">
+                        Savol: <strong class="text-white text-sm">1</strong> / 10
+                    </span>
+                </div>
+
+                <div class="flex items-center gap-4">
+                    <!-- Timer -->
+                    <div id="timerContainer" class="flex items-center gap-2 bg-slate-900 px-3.5 py-1.5 rounded-xl border border-slate-800">
+                        <i class="fa-regular fa-clock text-cyber-amber animate-pulse"></i>
+                        <span id="timerText" class="font-mono font-bold text-cyber-amber text-sm">00:45</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Visual Progress Bar -->
+            <div class="w-full bg-slate-900 h-2 rounded-full overflow-hidden border border-slate-800/80">
+                <div id="progressBar" class="bg-gradient-to-r from-brand-500 via-cyber-cyan to-cyber-purple h-full w-0 transition-all duration-300"></div>
+            </div>
+
+            <!-- Main Question Box -->
+            <div class="glass-panel border border-slate-800 rounded-3xl p-6 sm:p-10 shadow-2xl relative">
+                
+                <!-- Bookmark Action -->
+                <button id="bookmarkBtn" onclick="toggleBookmarkCurrentQuestion()" title="Savolni saqlab qo'yish" class="absolute top-6 right-6 text-slate-600 hover:text-cyber-amber transition-colors">
+                    <i class="fa-regular fa-bookmark text-2xl"></i>
+                </button>
+
+                <!-- Question Category Header -->
+                <div id="questionCategory" class="text-[11px] font-black uppercase tracking-widest text-brand-400 mb-3 flex items-center gap-2">
+                    <i class="fa-solid fa-layer-group"></i> GRAMMATIKA & SINTAKSIS
+                </div>
+
+                <!-- Main Russian Question -->
+                <h2 id="questionText" class="text-xl sm:text-2xl font-extrabold text-white mb-8 pr-10 leading-relaxed font-sans">
+                    Savol yuklanmoqda...
+                </h2>
+
+                <!-- Dynamic Options -->
+                <div id="optionsContainer" class="grid grid-cols-1 gap-3.5 mb-6">
+                    <!-- Dynamic rendering -->
+                </div>
+
+                <!-- Deep Philological Explanation in Uzbek -->
+                <div id="explanationBox" class="hidden bg-slate-950/90 border border-brand-500/40 rounded-2xl p-5 sm:p-6 mt-6 animate-fade-in shadow-xl">
+                    <div class="flex items-center gap-2 text-brand-400 font-extrabold text-xs uppercase tracking-wider mb-2">
+                        <i class="fa-solid fa-graduation-cap text-base"></i> Filologik va Grammatik Tahlil (O'zbek tilida):
+                    </div>
+                    <p id="explanationText" class="text-slate-300 text-xs sm:text-sm leading-relaxed font-normal">
+                        --
+                    </p>
+                </div>
+            </div>
+
+            <!-- Quiz Navigation Footer -->
+            <div class="flex items-center justify-between pt-2">
+                <button onclick="exitQuiz()" class="px-5 py-2.5 rounded-xl border border-slate-800 text-slate-400 hover:text-white hover:bg-slate-900 text-xs font-bold transition-all">
+                    <i class="fa-solid fa-arrow-left mr-2"></i> Chiqish
+                </button>
+
+                <button id="nextBtn" onclick="nextQuestion()" disabled class="px-7 py-3 rounded-xl bg-brand-600 hover:bg-brand-500 disabled:opacity-40 disabled:cursor-not-allowed text-white text-xs font-extrabold tracking-wider uppercase shadow-lg shadow-brand-600/30 transition-all flex items-center gap-2">
+                    <span>Keyingi Savol</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- RESULTS VIEW -->
+        <section id="resultsView" class="hidden space-y-8 text-center animate-fade-in">
+            <div class="glass-panel border border-slate-800 rounded-3xl p-8 sm:p-12 shadow-2xl max-w-2xl mx-auto relative overflow-hidden">
+                
+                <div id="resultBadgeIcon" class="inline-flex items-center justify-center w-24 h-24 rounded-3xl bg-brand-500/10 border border-brand-500/30 text-brand-400 text-4xl mb-6 shadow-inner">
+                    <i class="fa-solid fa-trophy"></i>
+                </div>
+
+                <h2 id="resultTitle" class="text-3xl font-black text-white mb-2">Respublika Bosqichiga Tayyormiz!</h2>
+                <p id="resultSubtitle" class="text-slate-400 text-xs sm:text-sm mb-8">Test sinovi yakunlandi va natijalaringiz tahlil qilindi.</p>
+
+                <!-- Percentage Score -->
+                <div class="flex flex-col items-center justify-center mb-8">
+                    <div class="text-6xl sm:text-7xl font-black bg-gradient-to-r from-brand-400 via-cyber-cyan to-cyber-purple bg-clip-text text-transparent mb-2">
+                        <span id="scorePercent">0</span>%
+                    </div>
+                    <p id="scoreText" class="text-slate-300 font-medium text-xs sm:text-sm">
+                        Siz 10 ta savoldan 8 tasiga to'g'ri javob berdingiz.
+                    </p>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="grid grid-cols-3 gap-3 mb-8">
+                    <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-800">
+                        <span class="block text-slate-500 text-[10px] uppercase font-bold mb-1">To'g'ri</span>
+                        <span id="correctCount" class="text-2xl font-black text-cyber-emerald">0</span>
+                    </div>
+                    <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-800">
+                        <span class="block text-slate-500 text-[10px] uppercase font-bold mb-1">Noto'g'ri</span>
+                        <span id="wrongCount" class="text-2xl font-black text-cyber-rose">0</span>
+                    </div>
+                    <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-800">
+                        <span class="block text-slate-500 text-[10px] uppercase font-bold mb-1">Sarf Vaqt</span>
+                        <span id="timeSpent" class="text-2xl font-black text-cyber-amber">0s</span>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <button onclick="restartQuiz()" class="px-6 py-3 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-extrabold text-xs uppercase tracking-wider shadow-lg shadow-brand-600/30 transition-all flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-rotate-right"></i> Qayta Ishlash
+                    </button>
+                    <button onclick="goHome()" class="px-6 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-extrabold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-house"></i> Bosh Menyu
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- MODAL: SAVED QUESTIONS -->
+    <div id="savedModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-3xl w-full max-h-[85vh] flex flex-col shadow-2xl overflow-hidden">
+            <div class="p-6 border-b border-slate-800 flex items-center justify-between">
+                <h3 class="text-base font-black text-white flex items-center gap-2">
+                    <i class="fa-solid fa-bookmark text-cyber-amber"></i> Saqlangan Olimpiada Savollari
+                </h3>
+                <button onclick="closeSavedModal()" class="text-slate-400 hover:text-white p-2">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            
+            <div id="savedListContainer" class="p-6 overflow-y-auto space-y-4 flex-grow custom-scrollbar">
+                <!-- Saved items -->
+            </div>
+
+            <div class="p-4 border-t border-slate-800 bg-slate-950/60 flex justify-end">
+                <button onclick="closeSavedModal()" class="px-5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold">
+                    Yopish
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: INCORRECT / MISCONCEPTIONS REVIEW -->
+    <div id="incorrectsModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-3xl w-full max-h-[85vh] flex flex-col shadow-2xl overflow-hidden">
+            <div class="p-6 border-b border-slate-800 flex items-center justify-between">
+                <h3 class="text-base font-black text-white flex items-center gap-2">
+                    <i class="fa-solid fa-triangle-exclamation text-cyber-rose"></i> Xatolar Ustida Ishlash (Review)
+                </h3>
+                <button onclick="closeIncorrectsModal()" class="text-slate-400 hover:text-white p-2">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            
+            <div id="incorrectsListContainer" class="p-6 overflow-y-auto space-y-4 flex-grow custom-scrollbar">
+                <!-- Incorrect items -->
+            </div>
+
+            <div class="p-4 border-t border-slate-800 bg-slate-950/60 flex justify-between items-center">
+                <button onclick="clearIncorrectHistory()" class="px-4 py-2 rounded-xl bg-rose-500/10 text-rose-400 border border-rose-500/20 hover:bg-rose-500/20 text-xs font-bold">
+                    Xatolar tarixini tozalash
+                </button>
+                <button onclick="closeIncorrectsModal()" class="px-5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold">
+                    Yopish
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: IMPORT CUSTOM QUESTIONS (JSON / TEXT) -->
+    <div id="importModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-2xl w-full flex flex-col shadow-2xl overflow-hidden">
+            <div class="p-6 border-b border-slate-800 flex items-center justify-between">
+                <h3 class="text-base font-black text-white flex items-center gap-2">
+                    <i class="fa-solid fa-file-import text-brand-400"></i> Yangi Savollar Import Qilish
+                </h3>
+                <button onclick="closeImportModal()" class="text-slate-400 hover:text-white p-2">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            
+            <div class="p-6 space-y-4 text-xs">
+                <p class="text-slate-300">
+                    O'qituvchilar va izlanuvchilar uchun JSON formatida yangi Olimpiada savollarini bankka qo'shish imkoniyati:
+                </p>
+                <textarea id="importJsonInput" rows="8" class="w-full bg-slate-950 border border-slate-800 rounded-2xl p-4 text-slate-200 font-mono text-xs focus:outline-none focus:border-brand-500" placeholder='[
+  {
+    "id": "custom_1",
+    "level": "Respublika",
+    "category": "GRAMMATIKA",
+    "question": "Укажите верный вариант...",
+    "options": ["A", "B", "C", "D"],
+    "correct": 0,
+    "explanation": "O'zbekcha izoh..."
+  }
+]'></textarea>
+                <div class="text-[11px] text-slate-500">
+                    * Format standart JSON massiv shaklida bo'lishi kerak.
+                </div>
+            </div>
+
+            <div class="p-4 border-t border-slate-800 bg-slate-950/60 flex justify-end gap-3">
+                <button onclick="closeImportModal()" class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 text-xs font-bold">
+                    Bekor qilish
+                </button>
+                <button onclick="saveCustomQuestions()" class="px-5 py-2 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-bold shadow-lg shadow-brand-600/30">
+                    Import qilish
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // COMPREHENSIVE OLYMPIAD QUESTION BANK
+        const BASE_QUESTION_BANK = [
+            // RESPUBLIKA LEVEL (C1-C2 High Level)
+            {
+                id: "olymp_1",
+                level: "Respublika",
+                category: "SINTAKSIS VA PUNKTUATSIYA",
+                question: "Укажите предложение, в котором предлог 'В ТЕЧЕНИЕ' написан грамматически верно:",
+                options: [
+                    "В течение всей недели мы готовились к олимпиаде по филологии.",
+                    "В течении реки наблюдалось сильное подводное замедление.",
+                    "В течение нескольких дней были внесены изменения в проект.",
+                    "A va C javoblar to'g'ri."
+                ],
+                correct: 3,
+                explanation: "'В течение' (vaqt ma'nosida - mobaynida) har doim oxirida 'е' bilan va alohida yoziladi (в течение недели/дней). 'В течении' esa faqat daryo oqimi (течение реки) ot shaklida 'и' bilan keladi. Shuning uchun A va C to'g'ri."
+            },
+            {
+                id: "olymp_2",
+                level: "Respublika",
+                category: "ORFOEPIYA VA URG'U",
+                question: "В каком слове правильно выделен ударный гласный звук?",
+                options: [
+                    "звони́т",
+                    "звóнит",
+                    "краси́вее (sifat orttirma shakli)",
+                    "A va C to'g mezoniga mos."
+                ],
+                correct: 3,
+                explanation: "Rus tili orfoepiya normasiga ko'ra 'звони́т' (fe'lda urg'u oxirgi bo'g'inga tushadi) va 'краси́вее' (urg'u o'zgarishsiz qoladi) to'g'ri talaffuz qilinadi. 'Зво́нит' esa qo'pol orfoepik xatodir."
+            },
+            {
+                id: "olymp_3",
+                level: "Respublika",
+                category: "PARONIMLAR",
+                question: "Выберите предложение, где пароним использован ОШИБОЧНО:",
+                options: [
+                    "Он надел пальто и вышел на улицу.",
+                    "Учитель одевает ученика в зимнюю куртку.",
+                    "Я надел своего младшего брата в новый костюм.",
+                    "Дипломатический демарш был неожиданным."
+                ],
+                correct: 2,
+                explanation: "'Одеть' - biror kishini kiyintirmoq (Одеть кого-то: брата, ребёнка). ' Надеть' - kiyimni o'ziga kiyish (Надеть что-то: пальто, шапку). 3-javobda 'надел брата' deyish paronimik xatodir ('одел брата' bo'lishi kerak)."
+            },
+            {
+                id: "olymp_4",
+                level: "Respublika",
+                category: "FE'L BOSH QARUVI (УПРАВЛЕНИЕ)",
+                question: "Укажите верную грамматическую управление-сочетаемость:",
+                options: [
+                    "Уделять внимание (чему?) учебе",
+                    "Уделять внимание (на что?) на учебу",
+                    "Оплатить (за что?) за проезд",
+                    "Предостеречь (от чего?) от опасности"
+                ],
+                correct: 0,
+                explanation: "'Уделять внимание' fe'li har doim Дательный падеж (чему? - учебе) talab qiladi. 'Оплатить' fe'li 'за' predlogisiz keladi (оплатить проезд). 'Предостеречь' fe'li 'от' (Родительный падеж) bilan keladi. Lekin eng ko'p olimpiadada tushadigan aniq norma: 'Уделять внимание учебе'."
+            },
+            {
+                id: "olymp_5",
+                level: "Respublika",
+                category: "FRAZEOLOGIYA VA ADABIYOT",
+                question: "Что означает фразеологизм 'Ахиллесова пята' и каково его происхождение?",
+                options: [
+                    "Быстрый бег / из греческой атлетики",
+                    "Уязвимое место / из древнегреческого мифа об Ахиллесе",
+                    "Сильная сторона человека / из римского права",
+                    "Непреодолимое препятствие / из скандинавских эпосов"
+                ],
+                correct: 1,
+                explanation: "'Ахиллесова пята' — insonning eng zaif, ojiz tomoni. Qadimgi yunon afsonasiga ko'ra, Feida o'g'li Axillni ilohiy suvga botirganda faqat tovonidan ushlab turgani uchun uning tovoni yagona zaif joyi bo'lib qolgan."
+            },
+
+            // TUMAN / MAKTAB LEVEL (B1-B2 Standard)
+            {
+                id: "olymp_6",
+                level: "Tuman",
+                category: "PADESH TIZIMI",
+                question: "Вставьте правильное окончание: 'Мы подошли к ... (старый преподаватель)'.",
+                options: [
+                    "старому преподавателю",
+                    "старым преподавателем",
+                    "старого преподавателя",
+                    "старом преподавателе"
+                ],
+                correct: 0,
+                explanation: "'К' predlogi har doim Дательный падеж (Jo'nalish kelishigi)ni talab etadi. Muzlik jinsdagi sifat va ot: 'старому преподавателю'."
+            },
+            {
+                id: "olymp_7",
+                level: "Tuman",
+                category: "FE'L KO'RINISHLARI (ВИДЫ ГЛАГОЛА)",
+                question: "Выберите глагол совершенного вида (СВ):",
+                options: [
+                    "решать",
+                    "прочитать",
+                    "писать",
+                    "изучать"
+                ],
+                correct: 1,
+                explanation: "Совершенный вид (tugal xatti-harakat) 'Что сделать?' savoliga javob beradi: 'прочитать'. Qolganlar 'Что делать?' - Несовершенный вид."
+            },
+            {
+                id: "olymp_8",
+                level: "Tuman",
+                category: "HARAKAT FE'LLARI",
+                question: "Завтра в это время мы будем ... в Самарканд на поезде.",
+                options: [
+                    "ехать",
+                    "ездить",
+                    "поехать",
+                    "приехать"
+                ],
+                correct: 0,
+                explanation: "'Будем' yordamchi fe me'yori bilan davomiylik va aniq vaqtdagi harakat uchun НСВ 'ехать' fe'li ishlatiladi."
+            },
+
+            // SPRINT (Urg'u & Frazeologiya)
+            {
+                id: "olymp_9",
+                level: "Sprint",
+                category: "ORFOEPIYA",
+                question: "В каком слове знак ударения поставлен НЕВЕРНО?",
+                options: [
+                    "катало́г",
+                    "догово́р",
+                    "то́рты",
+                    "портфе́ль (ошибка: по́ртфель)"
+                ],
+                correct: 3,
+                explanation: "'Портфель' so'zida urg'u har doim ikkinchi bo'g'inga tushadi (портфе́ль). 'По́ртфель' deb talaffuz qilish orfoepik xatodir."
+            },
+            {
+                id: "olymp_10",
+                level: "Sprint",
+                category: "FRAZEOLOGIYA",
+                question: "Значение фразеологизма 'Бить баклуши':",
+                options: [
+                    "Усердно работать",
+                    "Бездельничать, тратить время впустую",
+                    "Готовить еду",
+                    "Быстро бегать"
+                ],
+                correct: 1,
+                explanation: "'Бить баклуши' — bekorchi bo'lib vaqt o'tkazmoq, hech narsa qilmaslik degan ma'noni beradi (dastlab yog'och qoshiq uchun xomashyo yo'nish anglatgan)."
+            },
+
+            // GRAMMATIKA EKSPERT
+            {
+                id: "olymp_11",
+                level: "Grammatika",
+                category: "SINTAKSIS",
+                question: "Укажите сложносочинённое предложение (ССП):",
+                options: [
+                    "Солнце светило ярко, и птицы весело пели в саду.",
+                    "Когда пришла весна, растаял снег.",
+                    "Мы знаем, что он приедет завтра.",
+                    "Человек, читающий книги, много знает."
+                ],
+                correct: 0,
+                explanation: "Сложносочинённое предложение (ССП) tarkibida teng bog'lovchi 'и' mavjud va ikkala qism ham teng huquqli: 'Солнце светило, и птицы пели'."
+            },
+            {
+                id: "olymp_12",
+                level: "Grammatika",
+                category: "PREDLOGLAR",
+                question: "В каком варианте предлог пишется СЛИТНО?",
+                options: [
+                    "(в)следствие неблагоприятной погоды",
+                    "(в)течение учебного года",
+                    "(в)продолжение часа",
+                    "(в)целях безопасности"
+                ],
+                correct: 0,
+                explanation: "'Вследствие' (sababli / из-за ma'nosida) qo'shib yoziladi. 'В течение', 'в продолжение', 'в целях' esa har doim alohida yoziladi."
+            }
+        ];
+
+        // GLOBAL STATE
+        let allQuestions = [];
+        let currentQuizQuestions = [];
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let selectedOption = null;
+        let timerInterval = null;
+        let timeLeft = 45;
+        let timerEnabled = true;
+        let soundEnabled = true;
+        let startTime = 0;
+        let currentLevel = 'Respublika';
+        
+        // Tone.js Lo-Fi Synth
+        let isBgAudioPlaying = false;
+        let bgSynth = null;
+        let bgLoop = null;
+
+        // LOCAL STORAGE HELPERS
+        function getCustomQuestions() {
+            return JSON.parse(localStorage.getItem('e_harre_custom_questions') || '[]');
+        }
+
+        function getUsedIds() {
+            return JSON.parse(localStorage.getItem('e_harre_used_ids') || '[]');
+        }
+
+        function markAsUsed(id) {
+            const used = getUsedIds();
+            if (!used.includes(id)) {
+                used.push(id);
+                localStorage.setItem('e_harre_used_ids', JSON.stringify(used));
+            }
+        }
+
+        function getSavedIds() {
+            return JSON.parse(localStorage.getItem('e_harre_saved_ids') || '[]');
+        }
+
+        function toggleSaveId(id) {
+            let saved = getSavedIds();
+            if (saved.includes(id)) {
+                saved = saved.filter(i => i !== id);
+            } else {
+                saved.push(id);
+            }
+            localStorage.setItem('e_harre_saved_ids', JSON.stringify(saved));
+            updateSavedCountUI();
+        }
+
+        function getIncorrectIds() {
+            return JSON.parse(localStorage.getItem('e_harre_incorrect_ids') || '[]');
+        }
+
+        function addIncorrectId(id) {
+            let incorrects = getIncorrectIds();
+            if (!incorrects.includes(id)) {
+                incorrects.push(id);
+                localStorage.setItem('e_harre_incorrect_ids', JSON.stringify(incorrects));
+            }
+            updateIncorrectCountUI();
+        }
+
+        function clearIncorrectHistory() {
+            localStorage.removeItem('e_harre_incorrect_ids');
+            updateIncorrectCountUI();
+            closeIncorrectsModal();
+        }
+
+        function resetQuestionHistory() {
+            if (confirm("Barcha ishlangan va ko'rilgan testlar tarixini tozalaysizmi? Testlar qayta tushishni boshlaydi.")) {
+                localStorage.removeItem('e_harre_used_ids');
+                updateDashboardStats();
+                alert("Xotira tozalandi!");
+            }
+        }
+
+        // INITIALIZATION
+        window.onload = function() {
+            initQuestionBank();
+            updateDashboardStats();
+            updateSavedCountUI();
+            updateIncorrectCountUI();
+        };
+
+        function initQuestionBank() {
+            const custom = getCustomQuestions();
+            allQuestions = [...BASE_QUESTION_BANK, ...custom];
+        }
+
+        function updateDashboardStats() {
+            const usedIds = getUsedIds();
+            const totalCount = allQuestions.length;
+            const solvedCount = usedIds.length;
+            const readiness = totalCount > 0 ? Math.round((solvedCount / totalCount) * 100) : 0;
+
+            document.getElementById('dashTotalQuestions').innerText = totalCount;
+            document.getElementById('dashSolvedQuestions').innerText = solvedCount;
+            document.getElementById('dashReadinessScore').innerText = `${readiness}%`;
+
+            // Update stats per category
+            ['Respublika', 'Tuman', 'Sprint', 'Grammatika'].forEach(lvl => {
+                const totalInLvl = allQuestions.filter(q => q.level === lvl).length;
+                const usedInLvl = allQuestions.filter(q => q.level === lvl && usedIds.includes(q.id)).length;
+                const remaining = totalInLvl - usedInLvl;
+                
+                const elem = document.getElementById(`stat-${lvl}`);
+                if (elem) {
+                    elem.innerText = `${remaining} / ${totalInLvl} yangi savol`;
+                }
+            });
+
+            // Update Badges
+            if (solvedCount >= 3) document.getElementById('badge-filolog').classList.remove('opacity-30');
+            if (solvedCount >= 7) document.getElementById('badge-urgu').classList.remove('opacity-30');
+            if (solvedCount >= 12) {
+                document.getElementById('badge-chempion').classList.remove('opacity-30');
+                document.getElementById('userBadgeTitle').innerText = "Olimpiada Chempioni";
+            }
+        }
+
+        function updateSavedCountUI() {
+            const saved = getSavedIds();
+            const badge = document.getElementById('savedCount');
+            if (saved.length > 0) {
+                badge.innerText = saved.length;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
+        }
+
+        function updateIncorrectCountUI() {
+            const incorrects = getIncorrectIds();
+            const badge = document.getElementById('incorrectCount');
+            if (incorrects.length > 0) {
+                badge.innerText = incorrects.length;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
+        }
+
+        // SOUND FX
+        function playSound(type) {
+            if (!soundEnabled) return;
+            try {
+                const synth = new Tone.Synth().toDestination();
+                if (type === 'correct') {
+                    synth.triggerAttackRelease("E5", "8n", Tone.now());
+                    synth.triggerAttackRelease("B5", "8n", Tone.now() + 0.12);
+                } else if (type === 'wrong') {
+                    synth.triggerAttackRelease("C3", "8n", Tone.now());
+                } else if (type === 'click') {
+                    const memb = new Tone.MembraneSynth().toDestination();
+                    memb.triggerAttackRelease("C2", "16n");
+                }
+            } catch (e) {
+                console.log(e);
+            }
+        }
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            const icon = document.getElementById('soundIcon');
+            icon.className = soundEnabled ? "fa-solid fa-volume-high text-sm" : "fa-solid fa-volume-xmark text-slate-500 text-sm";
+        }
+
+        // AMBIENT FOCUS AUDIO SYNTHESIZER
+        async function toggleBgAudio() {
+            await Tone.start();
+            const btn = document.getElementById('bgAudioBtn');
+            const icon = document.getElementById('bgAudioIcon');
+
+            if (!isBgAudioPlaying) {
+                // Initialize Lo-Fi Synth pattern
+                bgSynth = new Tone.PolySynth(Tone.Synth, {
+                    oscillator: { type: "sine" },
+                    envelope: { attack: 1.5, decay: 2, sustain: 0.6, release: 3 }
+                }).toDestination();
+                bgSynth.volume.value = -18;
+
+                const chords = [["C3", "E3", "G3"], ["A2", "C3", "E3"], ["F2", "A2", "C3"], ["G2", "B2", "D3"]];
+                let chordIdx = 0;
+
+                bgLoop = new Tone.Loop(time => {
+                    bgSynth.triggerAttackRelease(chords[chordIdx], "2n", time);
+                    chordIdx = (chordIdx + 1) % chords.length;
+                }, "2m").start(0);
+
+                Tone.Transport.start();
+                isBgAudioPlaying = true;
+                btn.classList.add('border-cyber-cyan', 'text-cyber-cyan');
+                icon.className = "fa-solid fa-pause text-sm text-cyber-cyan";
+            } else {
+                Tone.Transport.stop();
+                if (bgLoop) bgLoop.dispose();
+                if (bgSynth) bgSynth.dispose();
+                isBgAudioPlaying = false;
+                btn.classList.remove('border-cyber-cyan', 'text-cyber-cyan');
+                icon.className = "fa-solid fa-headphones text-sm";
+            }
+        }
+
+        // START QUIZ LOGIC
+        function startQuiz(level) {
+            playSound('click');
+            currentLevel = level;
+            timerEnabled = document.getElementById('timerToggle').checked;
+            const limit = parseInt(document.getElementById('questionLimit').value, 10);
+            const usedIds = getUsedIds();
+
+            let available = [];
+            if (level === 'Aralash') {
+                available = allQuestions.filter(q => !usedIds.includes(q.id));
+            } else {
+                available = allQuestions.filter(q => q.level === level && !usedIds.includes(q.id));
+            }
+
+            if (available.length === 0) {
+                if (confirm(`'${level}' rejimida barcha savollarni ishlagansiz! Ushbu darajadagi test tarixini tozalab, qayta boshlaysizmi?`)) {
+                    // Reset used for this level
+                    const updatedUsed = usedIds.filter(id => {
+                        const q = allQuestions.find(item => item.id === id);
+                        return q && q.level !== level;
+                    });
+                    localStorage.setItem('e_harre_used_ids', JSON.stringify(updatedUsed));
+                    updateDashboardStats();
+                    startQuiz(level);
+                }
+                return;
+            }
+
+            const shuffled = [...available].sort(() => 0.5 - Math.random());
+            currentQuizQuestions = shuffled.slice(0, Math.min(limit, shuffled.length));
+
+            currentQuestionIndex = 0;
+            score = 0;
+            startTime = Date.now();
+
+            document.getElementById('dashboardView').classList.add('hidden');
+            document.getElementById('resultsView').classList.add('hidden');
+            document.getElementById('quizView').classList.remove('hidden');
+
+            renderQuestion();
+        }
+
+        // RENDER QUESTION
+        function renderQuestion() {
+            selectedOption = null;
+            document.getElementById('nextBtn').disabled = true;
+            document.getElementById('explanationBox').classList.add('hidden');
+
+            const currentQ = currentQuizQuestions[currentQuestionIndex];
+            markAsUsed(currentQ.id);
+
+            // Level & Header UI
+            document.getElementById('currentLevelBadge').innerText = currentQ.level;
+            document.getElementById('questionCategory').innerHTML = `<i class="fa-solid fa-layer-group"></i> ${currentQ.category}`;
+            document.getElementById('questionCounter').innerHTML = `Savol: <strong class="text-white text-sm">${currentQuestionIndex + 1}</strong> / ${currentQuizQuestions.length}`;
+
+            // Progress Bar
+            const percent = (currentQuestionIndex / currentQuizQuestions.length) * 100;
+            document.getElementById('progressBar').style.width = `${percent}%`;
+
+            // Question Text
+            document.getElementById('questionText').innerText = currentQ.question;
+
+            // Bookmark Status
+            const saved = getSavedIds();
+            const bookmarkBtn = document.getElementById('bookmarkBtn');
+            bookmarkBtn.className = saved.includes(currentQ.id) 
+                ? "absolute top-6 right-6 text-cyber-amber transition-colors"
+                : "absolute top-6 right-6 text-slate-600 hover:text-cyber-amber transition-colors";
+
+            // Render Options
+            const container = document.getElementById('optionsContainer');
+            container.innerHTML = '';
+
+            currentQ.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "option-btn w-full text-left p-4 sm:p-5 rounded-2xl bg-slate-900/80 hover:bg-slate-800/90 border border-slate-800 text-slate-200 font-medium transition-all duration-200 flex items-center justify-between group";
+                btn.onclick = () => selectOption(idx);
+                btn.innerHTML = `
+                    <div class="flex items-center gap-3.5">
+                        <span class="w-8 h-8 rounded-xl bg-slate-950 border border-slate-800 text-xs font-bold text-slate-400 flex items-center justify-center shrink-0 group-hover:border-brand-500 group-hover:text-brand-400 transition-colors">${String.fromCharCode(65 + idx)}</span>
+                        <span class="text-xs sm:text-sm leading-relaxed">${opt}</span>
+                    </div>
+                    <i class="fa-regular fa-circle text-slate-700 status-icon text-base"></i>
+                `;
+                container.appendChild(btn);
+            });
+
+            if (timerEnabled) {
+                document.getElementById('timerContainer').classList.remove('hidden');
+                startTimer();
+            } else {
+                document.getElementById('timerContainer').classList.add('hidden');
+            }
+        }
+
+        // TIMER LOGIC
+        function startTimer() {
+            clearInterval(timerInterval);
+            timeLeft = 45;
+            updateTimerDisplay();
+
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                updateTimerDisplay();
+
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    selectOption(-1); // Timeout forced selection
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const secs = timeLeft < 10 ? `0${timeLeft}` : timeLeft;
+            document.getElementById('timerText').innerText = `00:${secs}`;
+        }
+
+        // SELECT OPTION
+        function selectOption(index) {
+            if (selectedOption !== null) return;
+            clearInterval(timerInterval);
+
+            selectedOption = index;
+            const currentQ = currentQuizQuestions[currentQuestionIndex];
+            const optionBtns = document.querySelectorAll('.option-btn');
+            document.getElementById('nextBtn').disabled = false;
+
+            if (index === currentQ.correct) {
+                score++;
+                playSound('correct');
+            } else {
+                playSound('wrong');
+                addIncorrectId(currentQ.id); // Add to misconceptions
+            }
+
+            optionBtns.forEach((btn, idx) => {
+                btn.disabled = true;
+
+                if (idx === currentQ.correct) {
+                    btn.classList.add('bg-emerald-500/10', 'border-emerald-500/50', 'text-emerald-300');
+                    btn.querySelector('.status-icon').className = "fa-solid fa-circle-check text-cyber-emerald text-base";
+                } else if (idx === index) {
+                    btn.classList.add('bg-rose-500/10', 'border-rose-500/50', 'text-rose-300');
+                    btn.querySelector('.status-icon').className = "fa-solid fa-circle-xmark text-cyber-rose text-base";
+                } else {
+                    btn.classList.add('opacity-40');
+                }
+            });
+
+            // Display Philological Explanation
+            document.getElementById('explanationText').innerText = currentQ.explanation;
+            document.getElementById('explanationBox').classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            playSound('click');
+            currentQuestionIndex++;
+
+            if (currentQuestionIndex < currentQuizQuestions.length) {
+                renderQuestion();
+            } else {
+                finishQuiz();
+            }
+        }
+
+        function finishQuiz() {
+            clearInterval(timerInterval);
+            const totalTimeSpent = Math.round((Date.now() - startTime) / 1000);
+
+            document.getElementById('quizView').classList.add('hidden');
+            document.getElementById('resultsView').classList.remove('hidden');
+
+            const total = currentQuizQuestions.length;
+            const percent = Math.round((score / total) * 100);
+
+            document.getElementById('scorePercent').innerText = percent;
+            document.getElementById('correctCount').innerText = score;
+            document.getElementById('wrongCount').innerText = total - score;
+            document.getElementById('timeSpent').innerText = `${totalTimeSpent}s`;
+            document.getElementById('scoreText').innerText = `Siz ${total} ta savoldan ${score} tasiga to'g'ri javob berdingiz.`;
+
+            updateDashboardStats();
+        }
+
+        function toggleBookmarkCurrentQuestion() {
+            const currentQ = currentQuizQuestions[currentQuestionIndex];
+            toggleSaveId(currentQ.id);
+            renderQuestion();
+        }
+
+        // MODAL HANDLERS
+        function openSavedModal() {
+            playSound('click');
+            const savedIds = getSavedIds();
+            const container = document.getElementById('savedListContainer');
+            container.innerHTML = '';
+
+            if (savedIds.length === 0) {
+                container.innerHTML = `<div class="text-center py-8 text-slate-500">Saqlangan savollar mavjud emas.</div>`;
+            } else {
+                savedIds.forEach(id => {
+                    const q = allQuestions.find(i => i.id === id);
+                    if (q) {
+                        const card = document.createElement('div');
+                        card.className = "bg-slate-950/80 border border-slate-800 rounded-2xl p-4 space-y-2 text-xs";
+                        card.innerHTML = `
+                            <div class="flex justify-between items-start">
+                                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-brand-500/20 text-brand-400">${q.level} - ${q.category}</span>
+                                <button onclick="removeSaved('${q.id}')" class="text-slate-500 hover:text-rose-400"><i class="fa-solid fa-trash"></i></button>
+                            </div>
+                            <h4 class="text-white font-bold">${q.question}</h4>
+                            <p class="text-cyber-emerald font-semibold">To'g'ri: ${q.options[q.correct]}</p>
+                            <p class="text-slate-400 bg-slate-900 p-2.5 rounded-xl border border-slate-800/60">${q.explanation}</p>
+                        `;
+                        container.appendChild(card);
+                    }
+                });
+            }
+            document.getElementById('savedModal').classList.remove('hidden');
+        }
+
+        function removeSaved(id) {
+            toggleSaveId(id);
+            openSavedModal();
+        }
+
+        function closeSavedModal() {
+            document.getElementById('savedModal').classList.add('hidden');
+        }
+
+        function openIncorrectsModal() {
+            playSound('click');
+            const incorrectIds = getIncorrectIds();
+            const container = document.getElementById('incorrectsListContainer');
+            container.innerHTML = '';
+
+            if (incorrectIds.length === 0) {
+                container.innerHTML = `<div class="text-center py-8 text-slate-500">Xatolar mavjud emas! Barcha testlar a'lo yechilgan.</div>`;
+            } else {
+                incorrectIds.forEach(id => {
+                    const q = allQuestions.find(i => i.id === id);
+                    if (q) {
+                        const card = document.createElement('div');
+                        card.className = "bg-slate-950/80 border border-slate-800 rounded-2xl p-4 space-y-2 text-xs";
+                        card.innerHTML = `
+                            <div class="flex justify-between items-start">
+                                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-500/20 text-rose-400">${q.level} - ${q.category}</span>
+                            </div>
+                            <h4 class="text-white font-bold">${q.question}</h4>
+                            <p class="text-cyber-emerald font-semibold">To'g'ri javob: ${q.options[q.correct]}</p>
+                            <p class="text-slate-400 bg-slate-900 p-2.5 rounded-xl border border-slate-800/60">${q.explanation}</p>
+                        `;
+                        container.appendChild(card);
+                    }
+                });
+            }
+            document.getElementById('incorrectsModal').classList.remove('hidden');
+        }
+
+        function closeIncorrectsModal() {
+            document.getElementById('incorrectsModal').classList.add('hidden');
+        }
+
+        function openImportModal() {
+            document.getElementById('importModal').classList.remove('hidden');
+        }
+
+        function closeImportModal() {
+            document.getElementById('importModal').classList.add('hidden');
+        }
+
+        function saveCustomQuestions() {
+            try {
+                const text = document.getElementById('importJsonInput').value;
+                const parsed = JSON.parse(text);
+                if (Array.isArray(parsed)) {
+                    const currentCustom = getCustomQuestions();
+                    const updated = [...currentCustom, ...parsed];
+                    localStorage.setItem('e_harre_custom_questions', JSON.stringify(updated));
+                    initQuestionBank();
+                    updateDashboardStats();
+                    alert("Yangi savollar muvaffaqiyatli saqlandi va test bankiga qo'shildi!");
+                    closeImportModal();
+                } else {
+                    alert("Xatolik: JSON massiv formatida bo'lishi kerak.");
+                }
+            } catch (e) {
+                alert("JSON formatida xatolik mavjud. Qayta tekshiring.");
+            }
+        }
+
+        function goHome() {
+            playSound('click');
+            clearInterval(timerInterval);
+            document.getElementById('quizView').classList.add('hidden');
+            document.getElementById('resultsView').classList.add('hidden');
+            document.getElementById('dashboardView').classList.remove('hidden');
+            updateDashboardStats();
+        }
+
+        function restartQuiz() {
+            startQuiz(currentLevel);
+        }
+
+        function exitQuiz() {
+            if (confirm("Testdan chiqmoqchimisiz?")) {
+                goHome();
+            }
+        }
+    </script>
+</body>
+</html>
